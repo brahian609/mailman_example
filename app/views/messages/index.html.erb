@@ -24,32 +24,35 @@
           </div>
 
           <div class="panel-body">
-            <ul class="list-unstyled">
-              <li>
-                <a href="#" class="btn btn-primary btn-xs" onclick="javascript:window.open('/messages/new','ventanita','width=800,height=690, left=350, top=150' );return false">
-                  REDACTAR
-                </a>
-              </li>
+            <a href="#" class="btn btn-primary btn-xs" onclick="javascript:window.open('/messages/new','ventanita','width=800,height=690, left=350, top=150' );return false">
+              REDACTAR
+            </a>
+
+            <div class="clear">&nbsp;</div>
+
+            <ul class="nav nav-pills nav-stacked">
               <% if $server == 'imap.gmail.com'  %>
-                  <li><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Destacados', "#{messages_path}?folder=[Gmail]/Destacados", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Enviados', "#{messages_path}?folder=[Gmail]/Enviados", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Importantes', "#{messages_path}?folder=[Gmail]/Importantes", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Borradores', "#{messages_path}?folder=[Gmail]/Borradores", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Papelera', "#{messages_path}?folder=[Gmail]/Papelera", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Spam', "#{messages_path}?folder=[Gmail]/Spam", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
+                  <li class="<%= session[:folder] == "INBOX" ? "active" : "" %>"><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX" %></li>
+                  <li class="<%= session[:folder] == "[Gmail]/Destacados" ? "active" : "" %>"><%= link_to 'Destacados', "#{messages_path}?folder=[Gmail]/Destacados" %></li>
+                  <li class="<%= session[:folder] == "[Gmail]/Enviados" ? "active" : "" %>"><%= link_to 'Enviados', "#{messages_path}?folder=[Gmail]/Enviados" %></li>
+                  <li class="<%= session[:folder] == "[Gmail]/Importantes" ? "active" : "" %>"><%= link_to 'Importantes', "#{messages_path}?folder=[Gmail]/Importantes" %></li>
+                  <li class="<%= session[:folder] == "[Gmail]/Borradores" ? "active" : "" %>"><%= link_to 'Borradores', "#{messages_path}?folder=[Gmail]/Borradores" %></li>
+                  <li class="<%= session[:folder] == "[Gmail]/Papelera" ? "active" : "" %>"><%= link_to 'Papelera', "#{messages_path}?folder=[Gmail]/Papelera" %></li>
+                  <li class="<%= session[:folder] == "[Gmail]/Spam" ? "active" : "" %>"><%= link_to 'Spam', "#{messages_path}?folder=[Gmail]/Spam" %></li>
               <% elsif $server == 'imap-mail.outlook.com' %>
-                  <li><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Enviados', "#{messages_path}?folder=SENT", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Papelera', "#{messages_path}?folder=TRASH", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Correo no deseado', "#{messages_path}?folder=JUNK", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
+                  <li class="<%= session[:folder] == "INBOX" ? "active" : "" %>"><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX" %></li>
+                  <li class="<%= session[:folder] == "SENT" ? "active" : "" %>"><%= link_to 'Enviados', "#{messages_path}?folder=SENT" %></li>
+                  <li class="<%= session[:folder] == "TRASH" ? "active" : "" %>"><%= link_to 'Papelera', "#{messages_path}?folder=TRASH" %></li>
+                  <li class="<%= session[:folder] == "JUNK" ? "active" : "" %>"><%= link_to 'Correo no deseado', "#{messages_path}?folder=JUNK" %></li>
               <% else %>
-                  <li><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Enviados', "#{messages_path}?folder=Sent", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
-                  <li><%= link_to 'Papelera', "#{messages_path}?folder=Trash", {:style=>'text-decoration: none; background: none; color: #333'} %></li>
+                  <li class="<%= session[:folder] == "INBOX" ? "active" : "" %>"><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX" %></li>
+                  <li class="<%= session[:folder] == "SENT" ? "active" : "" %>"><%= link_to 'Enviados', "#{messages_path}?folder=Sent" %></li>
+                  <li class="<%= session[:folder] == "Trash" ? "active" : "" %>"><%= link_to 'Papelera', "#{messages_path}?folder=Trash" %></li>
               <% end  %>
-              <li><%= link_to 'Cerrar Sesión', settings_emails_path, {:style=>'text-decoration: none; background: none; color: #333'} %></li>
+              <li><%= link_to 'Cerrar Sesión', settings_emails_path %></li>
             </ul>
+
+
           </div>
 
         </div>
@@ -58,8 +61,33 @@
 
       <div class="col-lg-9">
 
-        <div class="col-lg-6">
-          <h3><%= session[:folder] %></h3>
+        <div class="col-lg-6" style="margin-top: 1.2%; padding-left: 0;">
+
+          <div class="col-lg-12" style="padding-left: 0">
+            <form action="/messages" method="get">
+
+              <div class="col-lg-6" style="padding-left: 0">
+                <input type="text" name="buscar" class="form-control" placeholder="Buscar" value="<%= $buscar_texto %>" required title="Escribe lo que deseas buscar">
+              </div>
+              <b class="col-lg-1">en</b>
+              <div class="col-lg-3">
+                <select name="por" id="" class="form-control">
+                  <option value="SUBJECT" <%= $buscar_por == "SUBJECT" ? "selected" : "" %>>ASUNTO</option>
+                  <option value="TO" <%= $buscar_por == "TO" ? "selected" : "" %>>PARA</option>
+                  <option value="FROM" <%= $buscar_por == "FROM" ? "selected" : "" %>>DE</option>
+                  <option value="CC" <%= $buscar_por == "CC" ? "selected" : "" %>>CC</option>
+                  <option value="BCC" <%= $buscar_por == "BCC" ? "selected" : "" %>>CCO</option>
+                  <option value="BODY" <%= $buscar_por == "BODY" ? "selected" : "" %>>MENSAJE</option>
+                </select>
+              </div>
+
+              <button class="btn btn-primary">
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+
+            </form>
+          </div>
+
         </div>
 
         <div class="col-lg-6" style="margin-top: 2%">
@@ -102,6 +130,7 @@
             <th></th>
             <th>De</th>
             <th>Asunto</th>
+            <th></th>
           </tr>
           <% begin %>
               <% @messages.each do |message| %>
@@ -112,6 +141,9 @@
                     </td>
                     <td>
                       <a href="javascript:void(0)" onclick="iframe_src('/messages/view_html/<%= message[:count_id] %>')" style="text-decoration: none; background: none; color: #333"><%= message[:subject] %></a>
+                    </td>
+                    <td>
+                      <a href="javascript:void(0)" onclick="iframe_src('/messages/view_html/<%= message[:count_id] %>')" style="text-decoration: none; background: none; color: #333"><%= message[:date] %></a>
                     </td>
                   </tr>
               <% end %>

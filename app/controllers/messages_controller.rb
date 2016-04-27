@@ -7,9 +7,11 @@ class MessagesController < ApplicationController
 
     begin
 
-      id_cuenta = params[:id] #id de la cuenta de email
-      rows = params[:rows] #registros a obtener de la cuenta de email
-      folder = params[:folder]
+      id_cuenta     = params[:id] #id de la cuenta de email
+      rows          = params[:rows] #registros a obtener de la cuenta de email
+      folder        = params[:folder]
+      $buscar_texto = params[:buscar] #texto a buscar
+      $buscar_por   = params[:por] #buscar por asunto,mensaje,etc
 
       if !id_cuenta.blank?
         session[:id_cuenta] = id_cuenta
@@ -56,34 +58,31 @@ class MessagesController < ApplicationController
 
         end #borrar registros
 
-        # if params[:a].blank? && params[:s].blank?
-        #
-        #   $anterior = 1
-        #   $siguiente = session[:rows]
-        #
-        # elsif !params[:a].blank?
-        #
-        #   if params[:a].to_i <= session[:rows]
-        #
-        #     $anterior = 1
-        #     $siguiente = session[:rows]
-        #
-        #   else
-        #
-        #     $anterior = params[:a].to_i - session[:rows]
-        #     $siguiente = params[:a].to_i
-        #
-        #   end
-        #
-        # else
-        #
-        #   $anterior = params[:s].to_i
-        #   $siguiente = params[:s].to_i + session[:rows]
-        #
-        # end
+        if params[:a].blank? && params[:s].blank?
 
-        $anterior  = params[:since].to_i
-        $siguiente = params[:until].to_i
+          $anterior = 1
+          $siguiente = session[:rows]
+
+        elsif !params[:a].blank?
+
+          if params[:a].to_i <= session[:rows]
+
+            $anterior = 1
+            $siguiente = session[:rows]
+
+          else
+
+            $anterior = params[:a].to_i - session[:rows]
+            $siguiente = params[:a].to_i
+
+          end
+
+        else
+
+          $anterior = params[:s].to_i
+          $siguiente = params[:s].to_i + session[:rows]
+
+        end
 
         load 'script/mailman_server.rb'
 
@@ -96,9 +95,9 @@ class MessagesController < ApplicationController
 
       end
 
-    rescue
+    rescue Exception => e
 
-      render json: { errors: {message: "Error! valida las credenciales de acceso o revisa la configuración de tu cuenta"}  }
+      render json: { message: [e, *e.backtrace].join("\n")  }
 
     end
 
@@ -139,6 +138,9 @@ class MessagesController < ApplicationController
 
     $anterior = params[:id].to_i
     $siguiente = params[:id].to_i + 1
+
+    $buscar_texto = nil
+    $buscar_por   = nil
 
     load 'script/mailman_server.rb'
 

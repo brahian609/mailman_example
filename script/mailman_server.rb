@@ -7,12 +7,16 @@ require 'mailman'
 #Mailman.config.logger = Logger.new("log/mailman.log")
 Mailman.config.poll_interval = 0
 
-$anterior = $anterior.blank? ? 1 : $anterior
-$siguiente = $siguiente.blank? ? 3 : $siguiente
+$anterior = $anterior.blank? ? 1 : $anterior #solo para testing desde consola
+$siguiente = $siguiente.blank? ? 3 : $siguiente # ""
 
-range_list_mail = ($anterior...$siguiente).to_a.join(',')
 count_range = ($anterior...$siguiente).count
 
+if !$buscar_texto.blank? && !$buscar_por.blank?
+  filter = ["#{$buscar_por}", "#{$buscar_texto}"]
+else
+  filter = "ALL"
+end
 
 if count_range > 1
   content = 'mail_list'
@@ -30,12 +34,12 @@ Mailman.config.imap = {
     username: $username,
     password: $password,
     folder: $folder,
-    filter: range_list_mail,
-    # filter: ["FROM", "noreply@coursera.org"],
+    filter: filter,
+    # filter: [20..47, "FROM", "noreply@coursera.org"],
     content: content
 }
 
-
+fechaActual = DateTime.now.strftime("%d %b.")
 cont = $anterior - 1
 
 Mailman::Application.run do
@@ -53,8 +57,13 @@ Mailman::Application.run do
         p "#{cont} Nuevo mensaje"
         p message
 
-        # @@messages += [{count_id: cont , from: message[0], subject: message[1]}]
-        @@messages += [{count_id: cont , from: message.from, subject: message.subject}]
+        date = message.date.strftime("%d %b.")
+
+        if fechaActual == date
+          date = message.date.strftime("%I:%M%p")
+        end
+
+        @@messages += [{count_id: cont , from: message.from, subject: message.subject, date: date}]
 
 
       else

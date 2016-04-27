@@ -68,13 +68,13 @@ module Mailman
       # Iterates through new messages, passing them to the processor, and
       # flagging them as done.
       def get_messages
-        @connection.search(@filter).each do |message|
+        @connection.search(@filter).slice($anterior..$siguiente).each do |message|
           # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
           # @connection.sort(["DATE"], ["ALL"], "US-ASCII")
           if @content == "mail"
-            body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
+            body = @connection.fetch(message, "ENVELOPE")[0].attr["ENVELOPE"]
           else
-            body = @connection.fetch(message, ["BODY[HEADER.FIELDS (DATE FROM SUBJECT)]"])[0].attr["BODY[HEADER.FIELDS (DATE FROM SUBJECT)]"]
+            body = @connection.fetch(message, ["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"])[0].attr["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"]
           end
           begin
             @processor.process(body)
