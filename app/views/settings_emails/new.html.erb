@@ -1,0 +1,41 @@
+
+<div class="container">
+
+  <div class="clear">&nbsp;</div>
+
+  <div class="row">
+
+    <div class="col-lg-2">
+
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Navegación
+        </div>
+        <div class="panel-body">
+          <ul class="list-unstyled">
+            <li><%= link_to 'Volver', settings_emails_path %></li>
+          </ul>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-lg-10">
+
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Crear configuración de email
+        </div>
+        <div class="panel-body">
+          <%= render 'form', name: 'Crear' %>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+

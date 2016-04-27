@@ -1,0 +1,44 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Asunto:</b>
+  <%= @message.subject %>
+</p>
+
+<p>
+  <b>Para:</b>
+  <%= @message.to %>
+</p>
+
+<p>
+  <b>De:</b>
+  <%= @message.from %>
+</p>
+
+<p>
+  <b>Html body:</b>
+  <%= @message.html_body %>
+</p>
+
+<p>
+  <b>Text body:</b>
+  <%= @message.text_body %>
+</p>
+
+<p>
+  <b>Adjuntos:</b>
+
+
+  <ul>
+    <% @att.each do |att|  %>
+          <li>
+            <%= link_to att.attached_file_file_name, att.attached_file.url(:original, false), {:class => 'link', target: '_blank'} %>
+          </li>
+    <% end %>
+  </ul>
+
+</p>
+
+
+<%= link_to 'Edit', edit_message_path(@message) %> |
+<%= link_to 'Back', messages_path %>

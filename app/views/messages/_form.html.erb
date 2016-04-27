@@ -1,0 +1,67 @@
+
+<div class="container-fluid">
+
+  <div class="row">
+
+    <div class="col-lg-12">
+
+      <h1>Nuevo Mensaje</h1>
+
+      <form action="/messages/send_email" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <input type="text" name="para[]" id="tokenfield" class="form-control" placeholder="Para" required title="Ingresa el email">
+        </div>
+        <a href="javascript:show_cc('cc')" id="action_cc">Cc</a>
+        <div class="form-group" id="cc" style="display: none">
+          <input type="text" name="cc[]" id="tokenfield1" class="form-control" placeholder="Cc">
+        </div>
+        <a href="javascript:show_cc('cco')" id="action_cco">Cco</a>
+        <div class="form-group" id="cco" style="display: none">
+          <input type="text" name="cco[]" id="tokenfield2" class="form-control" placeholder="Cco">
+        </div>
+        <div class="form-group">
+          <input type="text" name="asunto" class="form-control" placeholder="Asunto" required>
+        </div>
+        <div class="form-group" id="imagesholder">
+          <input type="file" name="adjunto[]" id="i1" class="imageup" multiple>
+        </div>
+        <div id="selectedimages"></div>
+        <div class="form-group">
+          <textarea name="mensaje" id="mensaje" required></textarea>
+        </div>
+        <script>
+          CKEDITOR.replace('mensaje',{
+            language: 'es'
+          });
+        </script>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            Enviar
+          </button>
+          <button class="btn btn-default" onclick="window.close()">
+            Cerrar
+          </button>
+        </div>
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  function show_cc(tipo){
+
+    if(tipo == 'cc'){
+      document.getElementById('cc').style.display = "block";
+      document.getElementById('action_cc').style.display = "none";
+    }else{
+      document.getElementById('cco').style.display = "block";
+      document.getElementById('action_cco').style.display = "none";
+    }
+
+  }
+
+</script>

@@ -1,0 +1,43 @@
+
+<div class="container">
+
+  <div class="row">
+
+    <p id="notice"><%= notice %></p>
+
+    <h1>Listado de Cuentas</h1>
+
+    <%= link_to 'Agregar nuevo', new_settings_email_path, {:class => 'btn btn-primary', :style => 'color: #fff'} %>
+    <div class="clear">&nbsp;</div>
+
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Server</th>
+        <th>Port</th>
+        <th colspan="4"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @settings_emails.each do |settings_email| %>
+          <tr>
+            <td><%= settings_email.username %></td>
+            <td>******</td>
+            <td><%= settings_email.server %></td>
+            <td><%= settings_email.port %></td>
+            <td><%= link_to 'Ver', settings_email %></td>
+            <td><%= link_to 'Editar', edit_settings_email_path(settings_email) %></td>
+            <td><%= link_to 'Ver Correo', "messages/inbox/#{settings_email.id}" %></td>
+            <td><%= link_to 'Eliminar', settings_email, method: :delete, data: { confirm: '¿Desea eliminar el registro?' } %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
+

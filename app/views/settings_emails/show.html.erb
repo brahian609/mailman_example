@@ -1,0 +1,67 @@
+
+<div class="container">
+
+  <div class="clear">&nbsp;</div>
+
+  <div class="row">
+
+    <div class="col-lg-2">
+
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Navegación
+        </div>
+        <div class="panel-body">
+          <ul class="list-unstyled">
+            <li><%= link_to 'Nuevo', new_settings_email_path %></li>
+            <li><%= link_to 'Editar', edit_settings_email_path(@settings_email) %></li>
+            <li><%= link_to 'Volver', settings_emails_path %></li>
+          </ul>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-lg-10">
+
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Detalles de la configuración de email
+        </div>
+        <div class="panel-body">
+
+          <p id="notice"><%= notice %></p>
+
+          <table class="table table-bordered">
+
+            <tr>
+              <th>Username:</th>
+              <td><%= @settings_email.username %></td>
+            </tr>
+            <tr>
+              <th>Password:</th>
+              <td>******</td>
+            </tr>
+            <tr>
+              <th>Server:</th>
+              <td><%= @settings_email.server %></td>
+            </tr>
+            <tr>
+              <th>Port:</th>
+              <td><%= @settings_email.port %></td>
+            </tr>
+
+          </table>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+
+

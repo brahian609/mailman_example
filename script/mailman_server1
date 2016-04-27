@@ -1,0 +1,204 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+require 'mailman'
+
+#Mailman.config.logger = Logger.new("log/mailman.log")
+Mailman.config.poll_interval = 15
+
+Mailman.config.imap = {
+    server: 'imap.gmail.com',
+    port: 993, # you usually don't need to set this, but it's there if you need to
+    ssl: true,
+    # Use starttls instead of ssl (do not specify both
+    #starttls: true,
+    username: 'produccion16@softpymes.com.co',
+    password: 'brian1789bmx',
+    # folder: 'SENT',
+    filter: 'ALL'
+}
+
+Mailman.config.pop3 = {
+    server: 'pop.gmail.com', port: 995, ssl: true,
+    username: 'produccion16@softpymes.com.co',
+    password: 'brian1789bmx'
+}
+
+# Mailman::Application.run do
+#   default do
+#     begin
+#       p "--- Nuevo mensaje consumido ---"
+#
+#       if message.multipart?
+#         the_message_html = message.html_part.body.decoded
+#         the_message_text = message.text_part.body.decoded
+#
+#         if message.has_attachments?
+#           the_message_attachments = []
+#           message.attachments.each do |attachment|
+#             file = StringIO.new(attachment.decoded)
+#             file.class.class_eval { attr_accessor :original_filename, :content_type }
+#             file.original_filename = attachment.filename
+#             file.content_type = attachment.mime_type
+#             attachment = Attachment.new
+#             attachment.attached_file = file
+#             attachment.save
+#             the_message_attachments << attachment
+#           end
+#         end
+#
+#       else
+#         the_message_html = message.body.decoded
+#         the_message_text = message.body.decoded
+#
+#         if message.has_attachments?
+#           the_message_attachments = []
+#           message.attachments.each do |attachment|
+#             file = StringIO.new(attachment.decoded)
+#             file.class.class_eval { attr_accessor :original_filename, :content_type }
+#             file.original_filename = attachment.filename
+#             file.content_type = attachment.mime_type
+#             attachment = Attachment.new
+#             attachment.attached_file = file
+#             attachment.save
+#             the_message_attachments << attachment
+#           end
+#         end
+#
+#       end
+#
+#       # Mailman.config.logger = Logger.new("log/mailman.log")
+#       Message.create(:from => message.from.first, :to => message.to.first, :subject => message.subject, :html_body => the_message_html, :text_body => the_message_text)
+#
+#       # map attachments with message object and save other stuff and do other processing or trigger other events..
+#
+#       # p message.subject
+#       # p the_message_html
+#       # p the_message_text
+#
+#     rescue Exception => e
+#       Mailman.logger.error "Exception occurred while receiving message:\n#{message}"
+#       Mailman.logger.error [e, *e.backtrace].join("\n")
+#     end
+#   end
+# end
+
+# Mailman::Application.run do
+#   default do
+#     p "--- Este es un nuevo mensaje ---"
+#     p message.from.first # message.from is an array
+#     p message.to.first # message.to is an array again..
+#     p message.subject
+#     p message.body
+#   end
+# end
+
+
+
+Mailman::Application.run do
+  default do
+    begin
+      #if message.has_attachments?
+      # Mailman.config.logger = Logger.new("log/mailman.log")
+          p "Nuevo mensaje de #{message.from}"
+          to_list = ''
+          to_list << message.to.join(',') if message.to.present?
+          from_list = ''
+          from_list << message.from.join(',') if message.from.present?
+          cc_list = ''
+          cc_list << message.cc.join(',') if message.cc.present?
+          bcc_list = ''
+          bcc_list << message.bcc.join(',') if message.bcc.present?
+          fl = '0'
+          message_id = message.message_id
+          if message.multipart?
+            if message.html_part
+              if message.html_part.charset.present?
+                if message.html_part.body
+                  fl = '1'
+    # to check if email has 7-bit Korean Charachter
+                  if message.html_part.charset == 'ISO-2022-KR'
+                  the_message_html = message.html_part.body.decoded.encode('UTF-8', 'us-ascii', :invalid => :replace, :undef => :replace)
+                  else
+                    the_message_html = message.html_part.body.decoded.encode('UTF-8', message.html_part.charset, :invalid => :replace, :undef => :replace)
+                  end
+                end
+              end
+            end
+    # if message has text_part present
+            if message.text_part
+              if message.text_part.body
+                if message.text_part.charset.present?
+                  fl = '1'
+                  if message.text_part.charset == 'ISO-2022-KR'
+                  the_message_text = message.text_part.body.decoded.encode('UTF-8', 'us-ascii', :invalid => :replace, :undef => :replace)
+                  else
+                    the_message_text = message.text_part.body.decoded.encode('UTF-8', message.text_part.charset, :invalid => :replace, :undef => :replace)
+                  end
+                end
+              end
+            end
+            em = Message.create(message_id: message_id, :from => from_list, :to => to_list, :subject => message.subject, :html_body => the_message_html, :text_body => the_message_text)
+
+    # to recieve the email attachments
+            the_message_attachments = []
+            message.attachments.each do |attachment|
+              file = StringIO.new(attachment.decoded)
+              file.class.class_eval { attr_accessor :original_filename, :content_type }
+              file.original_filename = attachment.filename
+              file.content_type = attachment.mime_type
+              attachment = Attachment.new
+              attachment.attached_file = file
+              attachment.message_id = em.id
+              # em.attachments << attachment
+              attachment.save(:validate => false)
+              the_message_attachments << attachment
+
+            end
+          else
+            if message.text_part.present?
+              if message.text_part.charset.present?
+                fl = '1'
+                if message.text_part.charset == 'ISO-2022-KR'
+                the_message_text = message.text_part.body.decoded.encode('UTF-8', 'us-ascii', :invalid => :replace, :undef => :replace)
+                else
+                  the_message_text = message.text_part.body.decoded.encode('UTF-8', message.text_part.charset, :invalid => :replace, :undef => :replace)
+                end
+              end
+            end
+            if message.html_part.present?
+              if message.html_part.charset.present?
+                fl = '1'
+                if message.html_part.charset == 'ISO-2022-KR'
+                the_message_html = message.html_part.body.decoded.encode('UTF-8′,us-ascii', :invalid => :replace, :undef => :replace)
+                else
+                  the_message_html = message.html_part.body.decoded.encode('UTF-8', message.html_part.charset, :invalid => :replace, :undef => :replace)
+                end
+              end
+            end
+
+            if fl != '1'
+            if message.body.present?
+              if message.charset.present?
+                if message.charset == 'ISO-2022-KR'
+                the_message_html = message.body.decoded.encode('UTF-8', 'us-ascii', :invalid => :replace, :undef => :replace)
+                else
+                  the_message_html = message.body.decoded.encode('UTF-8', message.charset, :invalid => :replace, :undef => :replace)
+                end
+              end
+            end
+            end
+            the_message_attachments = []
+            em = Message.create(message_id: message_id, :from => from_list, :to => to_list, :subject => message.subject, :html_body => the_message_html, :text_body => the_message_text)
+          end
+      #end
+        rescue Exception => e
+          Mailman.logger.error "Exception occurred while receiving message:\n#{message.subject} , #{message.from}"
+          p "Error "
+          Mailman.logger.error [e, *e.backtrace].join("\n")
+          Kernel.exit
+
+    end
+  end
+end
+

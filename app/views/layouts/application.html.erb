@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mailman</title>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+  <!-- jQuery UI CSS -->
+  <link href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" type="text/css" rel="stylesheet">
+
+  <link href="http://sliptree.github.io/bootstrap-tokenfield/dist/css/tokenfield-typeahead.css" type="text/css" rel="stylesheet">
+
+  <link href="http://sliptree.github.io/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css" type="text/css" rel="stylesheet">
+
+  <!-- ckeditor -->
+  <script src="//cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
+
+
+</head>
+<body>
+
+<%= yield %>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>
+
+
+<script>
+
+  $("#tipo_servidor").on('change',function(){
+
+    var servers = [{server: 'imap.gmail.com', port: 993},{server: 'imap-mail.outlook.com', port: 993},{server: 'imap.mail.yahoo.com', port: 993},{server: 'imap.mail.me.com', port: 993}];
+
+    var id = $(this).val();
+    var data = servers[id];
+
+    if(id.length == 0){
+      $("#server").val("");
+      $("#port").val("");
+      $("#form-field").hide();
+    }else if(id == 4){
+      $("#server").val("");
+      $("#port").val("");
+    }else{
+      $("#server").val(data.server);
+      $("#port").val(data.port);
+      $("#form-field").show();
+    }
+
+  });
+
+  /**test connection imap*/
+  $("#test_connection").on('click',function() {
+
+    console.log("--- iniciando testing... ---");
+    var username = $("#username").val();
+    var password = $("#password").val();
+    var server   = $("#server").val();
+    var port     = $("#port").val();
+
+//    console.log("Username => " + username);
+//    console.log("Server => " + server);
+//    console.log("Port => " + port);
+
+    if(username.length == 0 || password.length == 0 || server.length == 0 || port.length == 0){
+      console.log("--- debes completar todos los campos ---");
+      $(".alert").remove();
+      $("#form_account").prepend('<div class="alert alert-info"><i class="glyphicon glyphicon-info-sign"></i> Debes completar todos los campos <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+    }else {
+
+      var data = "username=" + username + "&password=" + password + "&server=" + server + "&port=" + port;
+
+      $.ajax({
+        type: 'post',
+        url: '/testing/test_connection',
+        data: data,
+        dataType: 'json',
+        beforeSend: function () {
+          $("#test_connection").html("Probando...");
+          $(".loader").show();
+        },
+        success: function (response) {
+
+          var class_alert;
+          var icon_alert;
+
+          $(".alert").remove();
+          console.log("--- Respuesta del servicio ---");
+          console.log(response.errors);
+          $("#test_connection").html("Probar Conexión");
+          $(".loader").hide();
+
+          if(response.errors.status == 200){
+            class_alert = "success";
+            icon_alert  = "ok";
+          }else{
+            class_alert = "danger";
+            icon_alert  = "remove";
+          }
+
+          $("#form_account").prepend('<div class="alert alert-'+class_alert+'"><i class="glyphicon glyphicon-'+icon_alert+'"></i> '+response.errors.message+' <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+        },
+        error: function (error) {
+          $(".alert").remove();
+          console.log("--- Error en el servicio ---");
+          console.log(error.responseText);
+          $("#test_connection").html("Probar Conexión");
+          $(".loader").hide();
+          $("#form_account").prepend('<div class="alert alert-danger"><i class="glyphicon glyphicon-remove"></i> Error! algo salio mal <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+        }
+      })
+    }
+
+  });
+
+  $('#tokenfield, #tokenfield1, #tokenfield2')
+
+
+      .on('tokenfield:createtoken', function (e) {
+        var data = e.attrs.value.split('|')
+        e.attrs.value = data[1] || data[0]
+        e.attrs.label = data[1] ? data[0] + ' (' + data[1] + ')' : data[0]
+      })
+
+      .on('tokenfield:createdtoken', function (e) {
+        // Über-simplistic e-mail validation
+        var re = /\S+@\S+\.\S+/
+        var valid = re.test(e.attrs.value)
+        if (!valid) {
+          $(e.relatedTarget).addClass('invalid')
+        }
+      })
+
+      .on('tokenfield:edittoken', function (e) {
+        if (e.attrs.label !== e.attrs.value) {
+          var label = e.attrs.label.split(' (')
+          e.attrs.value = label[0] + '|' + e.attrs.value
+        }
+      })
+
+      .on('tokenfield:removedtoken', function (e) {
+        console.log('Token removed! Token value was: ' + e.attrs.value)
+      })
+
+      .tokenfield({
+        autocomplete: {
+          source: ['brahian609@hotmail.com','produccion9@softpymes.com.co','produccion14@softpymes.com.co','brahianbmx@gmail.com','pruebas@hotmail.com','produccion@gmail.com','ruby@gmail.com'],
+          delay: 100
+        },
+        showAutocompleteOnFocus: true
+      })
+
+    /**add multiples files*/
+
+    Array.prototype.closest = function(value) {
+      var res = 0;
+      for (var i=0; i<this.length; i++) {
+        if (this[i] > res && this[i] < value) res=this[i];
+      }
+      return res;
+    }
+
+  jQuery(document).ready(function() {
+    var i=1;
+    jQuery(document).on('change', '.imageup', function(){
+
+      numberofimages=jQuery("#selectedimages > div").length;
+
+      if(numberofimages<10){
+        var id= jQuery(this).attr('id');
+
+        jQuery('#'+id).css("display", "none");
+
+        if(length>1) {
+          size_total = 0;
+          for(var r=0; r< this.files.length; r++) {
+
+            var name = this.files.item(r).name;
+            var size = parseInt(this.files.item(r).size);
+            size_total += size;
+            console.log("peso del archivo: "+size);
+
+            jQuery('#selectedimages').append('<div id="delete'+i+'"><a href="javascript:void(0)" class="deletebutton" id="delete/i'+i+'"><i class="glyphicon glyphicon-remove text-danger"></i></a>'+name+'</div>');
+
+            //increase numbers as slots are used.
+            numberofimages++;
+            i++;
+
+          }//end for
+
+          console.log("peso total adjuntos: "+size_total);
+
+        } else {
+
+          var value= jQuery(this).val();
+          //single
+          var name= value.replace(/^.*\\/, "");
+          var size = parseInt(this.files.item(r).size);
+          size_total = 0;
+          size_total += size;
+          console.log("peso del archivo: "+size);
+
+          jQuery('#selectedimages').append('<div id="delete' + i + '"><a href="javascript:void(0)" class="deletebutton" id="delete/i'+i+'"><i class="glyphicon glyphicon-remove text-danger"></i></a>'+name+'</div>');
+          numberofimages++;
+          i++;
+        }
+
+
+        var length= this.files.length;
+
+
+        if(numberofimages<10) {
+          jQuery('#imagesholder').append('<input type="file"  name="adjunto[]" id="i'+i+'" class="imageup" multiple/>');
+
+        } else {
+          jQuery('#imagesholder').append('<div id="fullimages"><small style="padding: 5px" class="alert alert-danger">Carga maxima de adjuntos, por favor, elimine alguno para añadir más!</small>');
+        }
+      } else {
+        jQuery('#imagesholder').append('<div id="fullimages"><small style="padding: 5px" class="alert alert-danger">Carga maxima de adjuntos, por favor, elimine alguno para añadir más!</small>');
+      }
+
+
+    });
+
+
+
+
+
+    //---------------delete code starts here!! look a little further down for the relevant code---------------
+    jQuery(document).on('click', '.deletebutton', function(){
+      event.preventDefault();
+
+      if(jQuery(this).attr('name') || jQuery(this).attr('name')===0) {
+        var inputname= jQuery(this).attr('name');
+        var id= jQuery(this).attr('id');
+        var id= id.replace('delete/i','');
+        var idarray= new Array();
+        jQuery('#imagesholder').children().each(function(){
+          itemId= this.id;
+          itemnumber= itemId.replace('i','');
+          idarray.push(itemnumber);
+        });
+        var inputid= idarray.closest(id);
+
+
+        //---------------relevant delete code ---------------
+        console.log('starting tests');
+        var files=jQuery('#i'+inputid)[0].files;
+
+        for (var i = 0; i < files.length; i++) {
+          console.log(files[i].name);
+          jQuery('#1st').append(files[i].name+'<br>');
+        }
+
+        jQuery('#i'+inputid).splice(inputname, 1);
+
+        console.log('2nd test');
+        var files=jQuery('#i'+inputid)[0].files;
+
+        for (var i = 0; i < files.length; i++) {
+          console.log(files[i].name);
+          jQuery('#2nd').append(files[i].name+'<br>');
+        }
+
+      }
+
+      //get the ids of the values to be deleted from the id- stable not seq dependant
+      id=jQuery(this).attr('id');
+      value= id.replace('delete/i','');
+      divid= '#delete'+value;
+      inputid= 'i'+value;
+      jQuery(divid).remove();
+      jQuery(inputid).remove();
+
+      //get the last element id to check if hidden or not.
+      lastid=jQuery('#imagesholder').children('.imageup').last().attr('id');
+      if(jQuery('#'+lastid).is(':visible')) {
+        // not visible, do nothing.
+
+      } else {//the last input element is not visible so no element available for entering new files
+        numberofimages=jQuery("#selectedimages > div").length;
+        if(numberofimages<10 && numberofimages>=9) {
+          i++; // not done from before so add in now
+          jQuery('#imagesholder').append('<input type="file"  name="adjunto[]" id="i'+i+'" class="imageup"/>');
+          jQuery('#fullimages').remove();
+          i++; // add another one to prepare for next call. this function should not be able to be called twice in a row.
+        }
+      }
+
+    });
+
+
+
+
+
+  })
+</script>
+
+</body>
+</html>

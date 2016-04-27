@@ -1,0 +1,53 @@
+
+<div class="col-md-8" id="container">
+
+  <div class="loader" style="width: 100%; height: 100%; background: darkgray; position: absolute; z-index: 1; opacity: 0.8; display: none">
+    <h1 style="text-align: center; color: #000; margin-top: 25%; font-weight: bold; text-shadow: 0 0 5px #fff, 0 0 5px #fff;">Probando Conexión...</h1>
+  </div>
+
+  <div id="form_account">
+    <%= form_for(@settings_email) do |f| %>
+        <% @server = @settings_email[:server]  %>
+
+        <div class="field">
+          <%= f.label 'Seleccione el Proveedor' %><br>
+          <select name="tipo_servidor" id="tipo_servidor" class="form-control">
+            <option value="">Tipo de servidor</option>
+            <option value="0" <%= (@server == 'imap.gmail.com') ? 'selected' : '' %>>Gmail</option>
+            <option value="1" <%= (@server == 'imap-mail.outlook.com') ? 'selected' : '' %>>Hotmail</option>
+            <option value="2" <%= (@server == 'imap.mail.yahoo.com') ? 'selected' : '' %>>Yahoo</option>
+            <option value="3" <%= (@server == 'imap.mail.me.com') ? 'selected' : '' %>>iCloud</option>
+            <option value="4">Otro</option>
+          </select>
+        </div>
+
+        <div id="form-field" style="display: <%= @server.blank? ? 'none' : 'block' %>;">
+
+          <div class="field">
+            <%= f.label :username %><br>
+            <%= f.text_field :username, {:class => 'form-control', :id => 'username'} %>
+          </div>
+          <div class="field">
+            <%= f.label :password %><br>
+            <%= f.password_field :password, {:class => 'form-control', :id => 'password'} %>
+          </div>
+          <div class="field">
+            <%= f.label :server %><br>
+            <%= f.text_field :server, {:class => 'form-control', :id => 'server'} %>
+          </div>
+          <div class="field">
+            <%= f.label :port %><br>
+            <%= f.text_field :port, {:class => 'form-control', :id => 'port'} %>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button id="test_connection" type="button" class="btn btn-primary">Probar Conexión</button>
+          <%= f.submit :value => name, :class => 'btn btn-primary' %>
+        </div>
+    <% end %>
+  </div>
+
+</div>
+
