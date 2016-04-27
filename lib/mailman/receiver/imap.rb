@@ -72,7 +72,7 @@ module Mailman
           # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
           # @connection.sort(["DATE"], ["ALL"], "US-ASCII")
           if @content == "mail"
-            body = @connection.fetch(message, "ENVELOPE")[0].attr["ENVELOPE"]
+            body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
           else
             body = @connection.fetch(message, ["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"])[0].attr["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"]
           end
@@ -86,6 +86,19 @@ module Mailman
         end
         # Clears messages that have the Deleted flag set
         @connection.expunge
+      end
+
+      def get_folders
+
+        begin
+          folders = @connection.list('','*')
+          folders.each do |fold|
+            puts fold.name
+          end
+        rescue StandardError => error
+          Mailman.logger.error "Error encountered processing folder: #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"
+        end
+
       end
 
       def started?

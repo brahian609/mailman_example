@@ -105,16 +105,29 @@
                     <option value="15" <%= (session[:rows] == 15) ? "selected": ""%>>15</option>
                     <option value="20" <%= (session[:rows] == 20) ? "selected": ""%>>20</option>
                   </select>
+                  <% if !$buscar_texto.blank? && !$buscar_por.blank? %>
+                    <input type="hidden" name="buscar" value="<%= $buscar_texto %>">
+                    <input type="hidden" name="por" value="<%= $buscar_por %>">
+                  <% end %>
                 </form>
               </div>
 
               <div class="col-lg-6">
-                <a href="/messages?a=<%=$anterior%>" class="btn btn-primary btn-xs">
-                  <i class="glyphicon glyphicon-chevron-left icon-white" style="color: #fff;"></i>
-                </a>
-                <a href="/messages?s=<%=$siguiente%>" class="btn btn-primary btn-xs">
-                  <i class="glyphicon glyphicon-chevron-right icon-white" style="color: #fff;"></i>
-                </a>
+                <% if !$buscar_texto.blank? && !$buscar_por.blank? %>
+                  <a href="/messages?a=<%=$anterior%>&buscar=<%= $buscar_texto %>&por=<%= $buscar_por %>" class="btn btn-primary btn-xs">
+                      <i class="glyphicon glyphicon-chevron-left icon-white" style="color: #fff;"></i>
+                    </a>
+                  <a href="/messages?s=<%=$siguiente%>&buscar=<%= $buscar_texto %>&por=<%= $buscar_por %>" class="btn btn-primary btn-xs">
+                      <i class="glyphicon glyphicon-chevron-right icon-white" style="color: #fff;"></i>
+                    </a>
+                <% else %>
+                  <a href="/messages?a=<%=$anterior%>" class="btn btn-primary btn-xs">
+                    <i class="glyphicon glyphicon-chevron-left icon-white" style="color: #fff;"></i>
+                  </a>
+                  <a href="/messages?s=<%=$siguiente%>" class="btn btn-primary btn-xs">
+                    <i class="glyphicon glyphicon-chevron-right icon-white" style="color: #fff;"></i>
+                  </a>
+                <% end %>
 
               </div>
 

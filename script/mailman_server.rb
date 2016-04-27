@@ -25,7 +25,6 @@ else
 end
 
 
-
 Mailman.config.imap = {
     server: $server,
     port: $port,
@@ -64,7 +63,6 @@ Mailman::Application.run do
         end
 
         @@messages += [{count_id: cont , from: message.from, subject: message.subject, date: date}]
-
 
       else
 

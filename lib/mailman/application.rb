@@ -143,7 +143,8 @@ module Mailman
       loop do
         begin
           connection.connect
-          connection.get_messages
+          # connection.get_messages
+          connection.get_folders
         rescue SystemCallError, EOFError => e
           Mailman.logger.error e.message
           unless (tries -= 1).zero?
