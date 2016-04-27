@@ -35,12 +35,6 @@ Mailman.config.imap = {
     content: content
 }
 
-# Mailman.config.pop3 = {
-#     server: 'pop.gmail.com', port: 995, ssl: true,
-#     username: 'produccion16@softpymes.com.co',
-#     password: 'brian1789bmx'
-# }
-
 
 cont = $anterior - 1
 
