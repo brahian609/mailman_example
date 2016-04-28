@@ -25,6 +25,7 @@ else
 end
 
 
+
 Mailman.config.imap = {
     server: $server,
     port: $port,
@@ -34,7 +35,6 @@ Mailman.config.imap = {
     password: $password,
     folder: $folder,
     filter: filter,
-    # filter: [20..47, "FROM", "noreply@coursera.org"],
     content: content
 }
 
@@ -54,15 +54,15 @@ Mailman::Application.run do
       if count_range > 1
 
         p "#{cont} Nuevo mensaje"
-        p message
+        p message['folder'].value
 
-        date = message.date.strftime("%d %b.")
-
-        if fechaActual == date
-          date = message.date.strftime("%I:%M%p")
-        end
-
-        @@messages += [{count_id: cont , from: message.from, subject: message.subject, date: date}]
+        # date = message.date.strftime("%d %b.")
+        #
+        # if fechaActual == date
+        #   date = message.date.strftime("%I:%M%p")
+        # end
+        #
+        # @@messages += [{count_id: cont , from: message.from, subject: message.subject, date: date}]
 
       else
 

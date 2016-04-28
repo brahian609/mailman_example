@@ -24,6 +24,7 @@ module Mailman
       end
     end
 
+
     # Processes a +Maildir::Message+ instance.
     def process_maildir_message(message)
       begin
