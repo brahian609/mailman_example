@@ -91,12 +91,11 @@ module Mailman
       def get_folders
 
         begin
+
           folders = @connection.list('','*')
           folders.each do |fold|
             @processor.process({folder: fold.name})
           end
-
-          # return @get_folders
 
         rescue StandardError => error
           Mailman.logger.error "Error encountered processing folder: #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"

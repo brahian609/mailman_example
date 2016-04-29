@@ -143,8 +143,14 @@ module Mailman
       loop do
         begin
           connection.connect
-          # connection.get_messages
-          connection.get_folders
+
+          #validar que consulta desea realizar (descargar correos o carpetas)
+          if ENV['folder'] == 'folder'
+            connection.get_folders
+          else
+            connection.get_messages
+          end
+
         rescue SystemCallError, EOFError => e
           Mailman.logger.error e.message
           unless (tries -= 1).zero?
