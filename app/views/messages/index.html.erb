@@ -31,24 +31,34 @@
             <div class="clear">&nbsp;</div>
 
             <ul class="nav nav-pills nav-stacked">
-              <% if $server == 'imap.gmail.com'  %>
-                  <li class="<%= session[:folder] == "INBOX" ? "active" : "" %>"><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX" %></li>
-                  <li class="<%= session[:folder] == "[Gmail]/Destacados" ? "active" : "" %>"><%= link_to 'Destacados', "#{messages_path}?folder=[Gmail]/Destacados" %></li>
-                  <li class="<%= session[:folder] == "[Gmail]/Enviados" ? "active" : "" %>"><%= link_to 'Enviados', "#{messages_path}?folder=[Gmail]/Enviados" %></li>
-                  <li class="<%= session[:folder] == "[Gmail]/Importantes" ? "active" : "" %>"><%= link_to 'Importantes', "#{messages_path}?folder=[Gmail]/Importantes" %></li>
-                  <li class="<%= session[:folder] == "[Gmail]/Borradores" ? "active" : "" %>"><%= link_to 'Borradores', "#{messages_path}?folder=[Gmail]/Borradores" %></li>
-                  <li class="<%= session[:folder] == "[Gmail]/Papelera" ? "active" : "" %>"><%= link_to 'Papelera', "#{messages_path}?folder=[Gmail]/Papelera" %></li>
-                  <li class="<%= session[:folder] == "[Gmail]/Spam" ? "active" : "" %>"><%= link_to 'Spam', "#{messages_path}?folder=[Gmail]/Spam" %></li>
-              <% elsif $server == 'imap-mail.outlook.com' %>
-                  <li class="<%= session[:folder] == "INBOX" ? "active" : "" %>"><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX" %></li>
-                  <li class="<%= session[:folder] == "SENT" ? "active" : "" %>"><%= link_to 'Enviados', "#{messages_path}?folder=SENT" %></li>
-                  <li class="<%= session[:folder] == "TRASH" ? "active" : "" %>"><%= link_to 'Papelera', "#{messages_path}?folder=TRASH" %></li>
-                  <li class="<%= session[:folder] == "JUNK" ? "active" : "" %>"><%= link_to 'Correo no deseado', "#{messages_path}?folder=JUNK" %></li>
-              <% else %>
-                  <li class="<%= session[:folder] == "INBOX" ? "active" : "" %>"><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX" %></li>
-                  <li class="<%= session[:folder] == "SENT" ? "active" : "" %>"><%= link_to 'Enviados', "#{messages_path}?folder=Sent" %></li>
-                  <li class="<%= session[:folder] == "Trash" ? "active" : "" %>"><%= link_to 'Papelera', "#{messages_path}?folder=Trash" %></li>
-              <% end  %>
+              <!--<% if $server == 'imap.gmail.com'  %>-->
+                  <!--<li class="<%= session[:folder] == "INBOX" ? "active" : "" %>"><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX" %></li>-->
+                  <!--<li class="<%= session[:folder] == "[Gmail]/Destacados" ? "active" : "" %>"><%= link_to 'Destacados', "#{messages_path}?folder=[Gmail]/Destacados" %></li>-->
+                  <!--<li class="<%= session[:folder] == "[Gmail]/Enviados" ? "active" : "" %>"><%= link_to 'Enviados', "#{messages_path}?folder=[Gmail]/Enviados" %></li>-->
+                  <!--<li class="<%= session[:folder] == "[Gmail]/Importantes" ? "active" : "" %>"><%= link_to 'Importantes', "#{messages_path}?folder=[Gmail]/Importantes" %></li>-->
+                  <!--<li class="<%= session[:folder] == "[Gmail]/Borradores" ? "active" : "" %>"><%= link_to 'Borradores', "#{messages_path}?folder=[Gmail]/Borradores" %></li>-->
+                  <!--<li class="<%= session[:folder] == "[Gmail]/Papelera" ? "active" : "" %>"><%= link_to 'Papelera', "#{messages_path}?folder=[Gmail]/Papelera" %></li>-->
+                  <!--<li class="<%= session[:folder] == "[Gmail]/Spam" ? "active" : "" %>"><%= link_to 'Spam', "#{messages_path}?folder=[Gmail]/Spam" %></li>-->
+              <!--<% elsif $server == 'imap-mail.outlook.com' %>-->
+                  <!--<li class="<%= session[:folder] == "INBOX" ? "active" : "" %>"><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX" %></li>-->
+                  <!--<li class="<%= session[:folder] == "SENT" ? "active" : "" %>"><%= link_to 'Enviados', "#{messages_path}?folder=SENT" %></li>-->
+                  <!--<li class="<%= session[:folder] == "TRASH" ? "active" : "" %>"><%= link_to 'Papelera', "#{messages_path}?folder=TRASH" %></li>-->
+                  <!--<li class="<%= session[:folder] == "JUNK" ? "active" : "" %>"><%= link_to 'Correo no deseado', "#{messages_path}?folder=JUNK" %></li>-->
+              <!--<% else %>-->
+                  <!--<li class="<%= session[:folder] == "INBOX" ? "active" : "" %>"><%= link_to 'Recibidos', "#{messages_path}?folder=INBOX" %></li>-->
+                  <!--<li class="<%= session[:folder] == "SENT" ? "active" : "" %>"><%= link_to 'Enviados', "#{messages_path}?folder=Sent" %></li>-->
+                  <!--<li class="<%= session[:folder] == "Trash" ? "active" : "" %>"><%= link_to 'Papelera', "#{messages_path}?folder=Trash" %></li>-->
+              <!--<% end  %>-->
+              <% begin %>
+                  <% @folders.each do |fold| %>
+                      <li class="<%= session[:folder] == fold[:name] ? "active" : "" %>">
+                        <%= link_to "#{fold[:name]}", "#{messages_path}?folder=#{fold[:name]}" %>
+                      </li>
+                  <% end %>
+
+              <% rescue %>
+                  <h1>Error en la descarga de los folders</h1>
+              <% end %>
               <li><%= link_to 'Cerrar Sesión', settings_emails_path %></li>
             </ul>
 

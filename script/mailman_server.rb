@@ -45,7 +45,6 @@ Mailman::Application.run do
 
   @@messages = []
   @@the_message_attachments = []
-  @@folders = []
 
   default do
     begin
@@ -54,24 +53,15 @@ Mailman::Application.run do
 
       if count_range > 1
 
-        #agregar los folders descargados
-        if message['folder'].present?
+        p "#{cont} Nuevo mensaje"
 
-          @@folders << message['folder'].value
+        date = message.date.strftime("%d %b.")
 
-        else
-
-          p "#{cont} Nuevo mensaje"
-
-          date = message.date.strftime("%d %b.")
-
-          if fechaActual == date
-            date = message.date.strftime("%I:%M%p")
-          end
-
-          @@messages += [{count_id: cont , from: message.from, subject: message.subject, date: date}]
-
+        if fechaActual == date
+          date = message.date.strftime("%I:%M%p")
         end
+
+        @@messages += [{count_id: cont , from: message.from, subject: message.subject, date: date}]
 
       else
 

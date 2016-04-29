@@ -84,9 +84,15 @@ class MessagesController < ApplicationController
 
         end
 
+        #obtener correos
+        ENV['folder'] = 'mailbox'
         load 'script/mailman_server.rb'
-
         @messages = @@messages
+
+        #obtener folders
+        ENV['folder'] = 'folder'
+        load 'script/mailman_folders.rb'
+        @folders = @@folders
 
         respond_to do |format|
           format.html # index.html.erb

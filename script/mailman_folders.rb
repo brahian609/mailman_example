@@ -16,8 +16,6 @@ Mailman.config.imap = {
     password: $password,
 }
 
-ENV['folder'] = 'folder'
-
 Mailman::Application.run do
 
   @@folders = []
@@ -25,7 +23,12 @@ Mailman::Application.run do
   default do
     begin
 
+      puts "+++++++++++++ folder +++++++++++++++++"
+
       p message['folder'].value
+      @@folders << {name: message['folder'].value}
+
+      puts "+++++++++++++ end folder +++++++++++++++++"
 
     rescue Exception => e
       Mailman.logger.error "Exception occurred while receiving message:\n#{message.subject} , #{message.from}"

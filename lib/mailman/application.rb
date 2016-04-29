@@ -145,10 +145,10 @@ module Mailman
           connection.connect
 
           #validar que consulta desea realizar (descargar correos o carpetas)
-          if ENV['folder'] == 'folder'
-            connection.get_folders
-          else
+          if ENV['folder'] == 'mailbox'
             connection.get_messages
+          elsif ENV['folder'] == 'folder'
+            connection.get_folders
           end
 
         rescue SystemCallError, EOFError => e
