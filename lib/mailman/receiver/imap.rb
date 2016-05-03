@@ -68,22 +68,28 @@ module Mailman
       # Iterates through new messages, passing them to the processor, and
       # flagging them as done.
       def get_messages
-        @connection.search(@filter).slice($anterior..$siguiente).each do |message|
-          # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
-          # @connection.sort(["DATE"], ["ALL"], "US-ASCII")
-          if @content == "mail"
-            body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
-          else
-            body = @connection.fetch(message, ["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"])[0].attr["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"]
-          end
-          begin
-            @processor.process(body)
-          rescue StandardError => error
-            Mailman.logger.error "Error encountered processing message: #{message.inspect}\n #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"
-            next
-          end
-          @connection.store(message, "+FLAGS", @done_flags)
-        end
+        # status = @connection.status("inbox", ["MESSAGES", "RECENT"])
+        # puts "++++++++++ status ++++++++++++"
+        # puts status
+        puts "++++++++++ no leidos ++++++++++++"
+        count = @connection.search(["NOT", "SEEN"]).count
+        p count
+        # @connection.search(@filter).slice($anterior..$siguiente).each do |message|
+        #   # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
+        #   # @connection.sort(["DATE"], ["ALL"], "US-ASCII")
+        #   if @content == "mail"
+        #     body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
+        #   else
+        #     body = @connection.fetch(message, ["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"])[0].attr["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"]
+        #   end
+        #   begin
+        #     @processor.process(body)
+        #   rescue StandardError => error
+        #     Mailman.logger.error "Error encountered processing message: #{message.inspect}\n #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"
+        #     next
+        #   end
+        #   @connection.store(message, "+FLAGS", @done_flags)
+        # end
         # Clears messages that have the Deleted flag set
         @connection.expunge
       end
