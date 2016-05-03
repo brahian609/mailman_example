@@ -72,8 +72,9 @@ module Mailman
         # puts "++++++++++ status ++++++++++++"
         # puts status
         puts "++++++++++ no leidos ++++++++++++"
-        count = @connection.search(["NOT", "SEEN"]).count
-        p count
+        @unread = @connection.search(["NOT", "SEEN"])
+        # p @unread
+        p @unread.count
         puts "++++++++++ get messages ++++++++++++"
         @connection.search(@filter).slice($anterior..$siguiente).each do |message|
           # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
@@ -83,11 +84,19 @@ module Mailman
           else
             # body = @connection.fetch(message, ["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"])[0].attr["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"]
             envelope = @connection.fetch(message, "ENVELOPE")[0].attr["ENVELOPE"]
+
+            if @unread.any? { |id| id == message }
+              @unread_value = "no"
+            else
+              @unread_value = "si"
+            end
+
             body = {
                 message_id: message,
                 from: envelope.from[0].name,
                 subject: envelope.subject,
                 date: envelope.date,
+                unread: @unread_value
             }
           end
           begin

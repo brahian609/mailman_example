@@ -26,7 +26,6 @@ end
 
 
 
-
 Mailman.config.imap = {
     server: $server,
     port: $port,
@@ -62,7 +61,7 @@ Mailman::Application.run do
           date = message.date.strftime("%I:%M%p")
         end
 
-        @@messages += [{count_id: message.message_id , from: message.from, subject: message.subject, date: date}]
+        @@messages += [{count_id: message.message_id , from: message.from, subject: message.subject, date: date, unread: message['unread'].value}]
 
       else
 
