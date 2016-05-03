@@ -7,8 +7,8 @@ require 'mailman'
 #Mailman.config.logger = Logger.new("log/mailman.log")
 Mailman.config.poll_interval = 0
 
-$anterior = $anterior.blank? ? 1 : $anterior #solo para testing desde consola
-$siguiente = $siguiente.blank? ? 3 : $siguiente # ""
+$anterior = $anterior.blank? ? 0 : $anterior #solo para testing desde consola
+$siguiente = $siguiente.blank? ? 2 : $siguiente # ""
 
 count_range = ($anterior...$siguiente).count
 
@@ -23,6 +23,7 @@ if count_range > 1
 else
   content = 'mail'
 end
+
 
 
 
@@ -61,7 +62,7 @@ Mailman::Application.run do
           date = message.date.strftime("%I:%M%p")
         end
 
-        @@messages += [{count_id: cont , from: message.from, subject: message.subject, date: date}]
+        @@messages += [{count_id: message.message_id , from: message.from, subject: message.subject, date: date}]
 
       else
 

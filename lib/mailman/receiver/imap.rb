@@ -74,24 +74,33 @@ module Mailman
         puts "++++++++++ no leidos ++++++++++++"
         count = @connection.search(["NOT", "SEEN"]).count
         p count
-        # @connection.search(@filter).slice($anterior..$siguiente).each do |message|
-        #   # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
-        #   # @connection.sort(["DATE"], ["ALL"], "US-ASCII")
-        #   if @content == "mail"
-        #     body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
-        #   else
-        #     body = @connection.fetch(message, ["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"])[0].attr["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"]
-        #   end
-        #   begin
-        #     @processor.process(body)
-        #   rescue StandardError => error
-        #     Mailman.logger.error "Error encountered processing message: #{message.inspect}\n #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"
-        #     next
-        #   end
-        #   @connection.store(message, "+FLAGS", @done_flags)
-        # end
+        puts "++++++++++ get messages ++++++++++++"
+        @connection.search(@filter).slice($anterior..$siguiente).each do |message|
+          # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
+          # @connection.sort(["DATE"], ["ALL"], "US-ASCII")
+          if @content == "mail"
+            body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
+          else
+            # body = @connection.fetch(message, ["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"])[0].attr["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"]
+            envelope = @connection.fetch(message, "ENVELOPE")[0].attr["ENVELOPE"]
+            body = {
+                message_id: message,
+                from: envelope.from[0].name,
+                subject: envelope.subject,
+                date: envelope.date,
+            }
+          end
+          begin
+            @processor.process(body)
+          rescue StandardError => error
+            Mailman.logger.error "Error encountered processing message: #{message.inspect}\n #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"
+            next
+          end
+          # Mark All Unread Mail As Read
+          # @connection.store(message, "+FLAGS", @done_flags)
+        end
         # Clears messages that have the Deleted flag set
-        @connection.expunge
+        # @connection.expunge
       end
 
       def get_folders
