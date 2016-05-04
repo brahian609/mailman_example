@@ -68,9 +68,9 @@ module Mailman
       # Iterates through new messages, passing them to the processor, and
       # flagging them as done.
       def get_messages
-        # status = @connection.status("inbox", ["MESSAGES", "RECENT"])
-        # puts "++++++++++ status ++++++++++++"
-        # puts status
+        status = @connection.status(@folder, ["MESSAGES"])
+        puts "++++++++++ total messages ++++++++++++"
+        puts status['MESSAGES']
         puts "++++++++++ no leidos ++++++++++++"
         @unread = @connection.search(["NOT", "SEEN"])
         # p @unread
