@@ -68,48 +68,62 @@ module Mailman
       # Iterates through new messages, passing them to the processor, and
       # flagging them as done.
       def get_messages
-        status = @connection.status(@folder, ["MESSAGES"])
-        puts "++++++++++ total messages ++++++++++++"
-        puts status['MESSAGES']
-        puts "++++++++++ no leidos ++++++++++++"
-        @unread = @connection.search(["NOT", "SEEN"])
-        # p @unread
-        p @unread.count
-        puts "++++++++++ get messages ++++++++++++"
+
         @connection.search(@filter).slice($anterior..$siguiente).each do |message|
-          # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
-          # @connection.sort(["DATE"], ["ALL"], "US-ASCII")
-          if @content == "mail"
-            body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
-          else
-            # body = @connection.fetch(message, ["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"])[0].attr["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"]
-            envelope = @connection.fetch(message, "ENVELOPE")[0].attr["ENVELOPE"]
-
-            if @unread.any? { |id| id == message }
-              @unread_value = "no"
-            else
-              @unread_value = "si"
-            end
-
-            body = {
-                message_id: message,
-                from: envelope.from[0].name,
-                subject: envelope.subject,
-                date: envelope.date,
-                unread: @unread_value
-            }
-          end
-          begin
-            @processor.process(body)
-          rescue StandardError => error
-            Mailman.logger.error "Error encountered processing message: #{message.inspect}\n #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"
-            next
-          end
-          # Mark All Unread Mail As Read
-          # @connection.store(message, "+FLAGS", @done_flags)
+          p message
+          body = @connection.fetch(message, "ENVELOPE")[0].attr["ENVELOPE"]
+          puts body
+          @connection.copy(message, "[Gmail]/Papelera")
+          @connection.store(message, "+FLAGS", [:Deleted])
         end
-        # Clears messages that have the Deleted flag set
-        # @connection.expunge
+        @connection.expunge
+
+        # status = @connection.status(@folder, ["MESSAGES"])
+        # puts "++++++++++ total messages ++++++++++++"
+        # puts status['MESSAGES']
+        # puts "++++++++++ no leidos ++++++++++++"
+        # @unread = @connection.search(["NOT", "SEEN"])
+        # # p @unread
+        # p @unread.count
+        # puts "++++++++++ get messages ++++++++++++"
+        # @connection.search(@filter).slice($anterior..$siguiente).each do |message|
+        #   # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
+        #   # @connection.sort(["DATE"], ["ALL"], "US-ASCII")
+        #   if @content == "mail"
+        #     body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
+        #   else
+        #     # body = @connection.fetch(message, ["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"])[0].attr["BODY[HEADER.FIELDS (DATE FROM Message-ID SUBJECT)]"]
+        #     envelope = @connection.fetch(message, "ENVELOPE")[0].attr["ENVELOPE"]
+        #
+        #     if @unread.any? { |id| id == message }
+        #       @unread_value = "no"
+        #     else
+        #       @unread_value = "si"
+        #     end
+        #
+        #     body = {
+        #         message_id: message,
+        #         from: envelope.from[0].name,
+        #         subject: envelope.subject,
+        #         date: envelope.date,
+        #         unread: @unread_value
+        #     }
+        #   end
+        #   begin
+        #     @processor.process(body)
+        #   rescue StandardError => error
+        #     Mailman.logger.error "Error encountered processing message: #{message.inspect}\n #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"
+        #     next
+        #   end
+        #   # Mark All Unread Mail As Read
+        #   if @content == "mail"
+        #     @connection.store(message, "+FLAGS", @done_flags)
+        #   end
+        # end
+        # # Clears messages that have the Deleted flag set
+        # if @content == "mail"
+        #   @connection.expunge
+        # end
       end
 
       def get_folders
