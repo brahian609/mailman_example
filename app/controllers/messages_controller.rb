@@ -142,12 +142,13 @@ class MessagesController < ApplicationController
   #descargar el contenido de un correo en especifico
   def view_html
 
-    $anterior = params[:id].to_i
-    $siguiente = params[:id].to_i + 1
+    $anterior = params[:id].to_i - 1
+    $siguiente = params[:id].to_i - 1
 
     $buscar_texto = nil
     $buscar_por   = nil
 
+    ENV['folder'] = 'mailbox'
     load 'script/mailman_server.rb'
 
     adjuntos = ''
@@ -169,21 +170,23 @@ class MessagesController < ApplicationController
 
     adjuntos_list =  (adjuntos.length > 0) ? 'Adjuntos: <ul>' + adjuntos + '</ul>' : ''
 
-    respond_to do |format|
-      format.html { render text: '
-                  <div class="container-fluid"> ' +
-          '<br>' +
-          'De: ' + @from  +
-          '<br>' +
-          'A: <span style="word-wrap: break-word;">' + @to + '</span>' +
-          '<br>' +
-          cc_list +
-          bcc_list +
-          adjuntos_list +
-          '<hr class="col-lg-12">' +
-          '</div>' + @html, :layout => false}
-      format.json { render json: {message: @html} }
-    end
+    render file: 'messages/view_html'
+
+    # respond_to do |format|
+    #   format.html { render text: '
+    #               <div class="container-fluid"> ' +
+    #       '<br>' +
+    #       'De: ' + @from  +
+    #       '<br>' +
+    #       'A: <span style="word-wrap: break-word;">' + @to + '</span>' +
+    #       '<br>' +
+    #       cc_list +
+    #       bcc_list +
+    #       adjuntos_list +
+    #       '<hr class="col-lg-12">' +
+    #       '</div>' + @html, :layout => false}
+    #   format.json { render json: {message: @html} }
+    # end
 
   end
 
