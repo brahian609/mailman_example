@@ -7,23 +7,48 @@
     <h4>Lo mejor de Gmail estés donde estés</h4>
     <hr style="margin-top: 0px; border-top: 1px solid #235589">
 
-    <strong>Brahian Giraldo</strong>
+    <strong><%= @from %></strong>
     <br>
     <div style="max-width: 90%; float: left">
-      <small>Para Pedro, Pablo, Camilo, Mateo</small>
+      <small>Para <%= @to[0..50] %></small>
     </div>
     <div style="margin-left: 5px; max-width: 1%; float: left">
-      <button type="button" class="btn btn-default btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-content="De: Brahian Giraldo" >
+      <!--<button type="button" class="btn btn-default btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-content="De: Brahian Giraldo" >
         <span class="caret"></span>
-      </button>
+      </button>-->
+      <div class="dropdown">
+        <button class="btn btn-default btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true">
+          <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu"
+             style="word-wrap: break-word;
+             width: 500px;
+             padding: 20px;
+             height: 300px;
+             overflow: auto">
+          <table>
+            <tr>
+              <td valign="top">De:</td>
+              <th><%= @from %></th>
+            </tr>
+            <tr>
+              <td valign="top">Para:</td>
+              <td><%= @to %></td>
+            </tr>
+            <tr>
+              <td valign="top">Fecha:</td>
+              <td><%= @date %></td>
+            </tr>
+            <tr>
+              <td valign="top">Asunto:</td>
+              <td><%= @subject %></td>
+            </tr>
+          </table>
+        </div>
+      </div>
     </div>
 
   </div>
 
 
 </div>
-<script>
-  $(function () {
-    $('[data-toggle="popover"]').popover()
-  })
-</script>

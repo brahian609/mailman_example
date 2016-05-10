@@ -68,16 +68,18 @@ Mailman::Application.run do
         p "Detalles del mensaje"
         p message
 
+        date = message.date.strftime('%a %d %b %Y, %I:%M %p')
+
         message_id = message.message_id
 
         to_list = ''
-        to_list << message.to.join(',') if message.to.present?
+        to_list << message.to.join(', ') if message.to.present?
         from_list = ''
-        from_list << message.from.join(',') if message.from.present?
+        from_list << message.from.join(', ') if message.from.present?
         cc_list = ''
-        cc_list << message.cc.join(',') if message.cc.present?
+        cc_list << message.cc.join(', ') if message.cc.present?
         bcc_list = ''
-        bcc_list << message.bcc.join(',') if message.bcc.present?
+        bcc_list << message.bcc.join(', ') if message.bcc.present?
         fl = '0'
 
         if message.multipart?
@@ -108,7 +110,7 @@ Mailman::Application.run do
             end
           end
 
-          @@messages += [{count_id: cont , message_id: message_id, from: from_list, to: to_list, cc: cc_list, bcc: bcc_list, subject: message.subject, :html_body => the_message_html, text_body: the_message_text}]
+          @@messages += [{count_id: cont , message_id: message_id, from: from_list, to: to_list, cc: cc_list, bcc: bcc_list, subject: message.subject, date: date, :html_body => the_message_html, text_body: the_message_text}]
           # p "Array de mensajes #{@@messages}"
 
           # em = Message.create(:message_id => message_id, :from => from_list, :to => to_list, :subject => message.subject, :html_body => the_message_html, :text_body => the_message_text)
@@ -167,7 +169,7 @@ Mailman::Application.run do
             end
           end
           # the_message_attachments = []
-          @@messages += [{count_id: cont ,message_id: message_id, from: from_list, to: to_list, cc: cc_list, bcc: bcc_list, subject: message.subject, :html_body => the_message_html, text_body: the_message_text}]
+          @@messages += [{count_id: cont ,message_id: message_id, from: from_list, to: to_list, cc: cc_list, bcc: bcc_list, subject: message.subject, date: date, :html_body => the_message_html, text_body: the_message_text}]
           # em = Message.create(:message_id => message_id, :from => from_list, :to => to_list, :subject => message.subject, :html_body => the_message_html, :text_body => the_message_text)
 
         end

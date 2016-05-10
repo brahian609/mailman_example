@@ -158,6 +158,8 @@ class MessagesController < ApplicationController
       @to = message[:to]
       @cc = message[:cc]
       @bcc = message[:bcc]
+      @subject = message[:subject]
+      @date = message[:date]
       @html = message[:html_body]
     end
 
