@@ -25,7 +25,6 @@ else
 end
 
 
-
 Mailman.config.imap = {
     server: $server,
     port: $port,
@@ -54,6 +53,7 @@ Mailman::Application.run do
       if count_range > 1
 
         p "#{cont} Nuevo mensaje"
+        p "Fecha => #{message.date}"
 
         date = message.date.strftime("%d %b.")
 

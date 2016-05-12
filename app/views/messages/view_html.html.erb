@@ -13,9 +13,7 @@
       <small>Para <%= @to[0..50] %></small>
     </div>
     <div style="margin-left: 5px; max-width: 1%; float: left">
-      <!--<button type="button" class="btn btn-default btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-content="De: Brahian Giraldo" >
-        <span class="caret"></span>
-      </button>-->
+
       <div class="dropdown">
         <button class="btn btn-default btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true">
           <span class="caret"></span>
@@ -50,5 +48,8 @@
 
   </div>
 
+  <%= @text %>
+  <div class="clear">&nbsp;</div>
+  <%= @html %>
 
 </div>

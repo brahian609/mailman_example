@@ -160,6 +160,7 @@ class MessagesController < ApplicationController
       @bcc = message[:bcc]
       @subject = message[:subject]
       @date = message[:date]
+      @text = message[:text_body]
       @html = message[:html_body]
     end
 
@@ -172,23 +173,73 @@ class MessagesController < ApplicationController
 
     adjuntos_list =  (adjuntos.length > 0) ? 'Adjuntos: <ul>' + adjuntos + '</ul>' : ''
 
-    render file: 'messages/view_html'
+    # render file: 'messages/view_html'
 
-    # respond_to do |format|
-    #   format.html { render text: '
-    #               <div class="container-fluid"> ' +
-    #       '<br>' +
-    #       'De: ' + @from  +
-    #       '<br>' +
-    #       'A: <span style="word-wrap: break-word;">' + @to + '</span>' +
-    #       '<br>' +
-    #       cc_list +
-    #       bcc_list +
-    #       adjuntos_list +
-    #       '<hr class="col-lg-12">' +
-    #       '</div>' + @html, :layout => false}
-    #   format.json { render json: {message: @html} }
-    # end
+    respond_to do |format|
+      format.html {
+        render text: '<div class="container-fluid"> ' +
+          '<br>' +
+          'De: ' + @from  +
+          '<br>' +
+          'A: <span style="word-wrap: break-word;">' + @to + '</span>' +
+          '<br>' +
+          cc_list +
+          bcc_list +
+          adjuntos_list +
+          '<hr class="col-lg-12">' +
+          '</div>' + @html, :layout => false
+      }
+      # format.html {
+      #   render text: '<div class="container-fluid">' +
+      #     '<div class="col-md-12" style="background-color: #ced8e1">' +
+      #       '<h4>' + @subject + '</h4>' +
+      #       '<hr style="margin-top: 0px; border-top: 1px solid #235589">' +
+      #       '<strong>' + @from + '</strong>' +
+      #       '<br>' +
+      #       '<div style="max-width: 90%; float: left">' +
+      #         '<small>Para ' + @to[0..50] + '</small>' +
+      #       '</div>' +
+      #       '<div style="margin-left: 5px; max-width: 1%; float: left">' +
+      #         '<div class="dropdown">' +
+      #           '<button class="btn btn-default btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true">' +
+      #             '<span class="caret"></span>' +
+      #           '</button>' +
+      #           '<div class="dropdown-menu"
+      #                style="word-wrap: break-word;
+      #                width: 500px;
+      #                padding: 20px;
+      #                height: 300px;
+      #                overflow: auto">' +
+      #             '<table>
+      #               <tr>
+      #                 <td valign="top">De:</td>
+      #                 <th>' + @from + '</th>
+      #               </tr>
+      #               <tr>
+      #                 <td valign="top">Para:</td>
+      #                 <td>' + @to + '</td>
+      #               </tr>
+      #               <tr>
+      #                 <td valign="top">Fecha:</td>
+      #                 <td>' + @date + '</td>
+      #               </tr>
+      #               <tr>
+      #                 <td valign="top">Asunto:</td>
+      #                 <td>' + @subject + '</td>
+      #               </tr>
+      #             </table>
+      #           </div>
+      #         </div>
+      #       </div>
+      #     </div>
+      #   </div>'
+      # }
+      format.json {
+        render json: {
+            message: @html
+        }
+      }
+    end
 
   end
 
