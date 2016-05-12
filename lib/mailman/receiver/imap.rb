@@ -87,9 +87,7 @@ module Mailman
         p @unread.count
         puts "++++++++++ get messages ++++++++++++"
 
-        # @connection.sort(["FROM"], ["ALL"], "US-ASCII")
-        # result = []
-        @connection.search(@filter).slice(146..154).reverse!.each do |message|
+        @connection.search(@filter).reverse!.slice($anterior..$siguiente).each do |message|
           # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
           # @connection.sort(["DATE"], ["ALL"], "US-ASCII")
           if @content == "mail"
@@ -114,7 +112,6 @@ module Mailman
           end
           begin
             @processor.process(body)
-            # result << body
           rescue StandardError => error
             Mailman.logger.error "Error encountered processing message: #{message.inspect}\n #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"
             next
@@ -124,11 +121,6 @@ module Mailman
             @connection.store(message, "+FLAGS", @done_flags)
           end
         end
-
-        # result.sort_by{|k| k[:message_id]}.reverse.each do |data|
-        #   # p data
-        #   @processor.process(data)
-        # end
 
         # Clears messages that have the Deleted flag set
         if @content == "mail"
