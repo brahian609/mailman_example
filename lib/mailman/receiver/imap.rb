@@ -102,9 +102,17 @@ module Mailman
               @unread_value = "si"
             end
 
+            if envelope.from[0].name.nil? || envelope.from[0].name.scan(/[^a-zA-Z]/).length > 1
+              from = "#{envelope.from[0].mailbox}@#{envelope.from[0].host}"
+            else
+              from = envelope.from[0].name
+            end
+
+            #scan(/[^a-zA-Z]/).length
+
             body = {
                 message_id: message,
-                from: envelope.from[0].name,
+                from: from,
                 subject: envelope.subject,
                 date: envelope.date,
                 unread: @unread_value
