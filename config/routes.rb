@@ -10,6 +10,7 @@ MailmanExampleCode::Application.routes.draw do
   get 'messages/view_html/:id' => 'messages#view_html'
   post 'messages/send_email' => 'messages#send_email'
   post 'testing/test_connection' => 'messages#test_connection'
+  post 'messages/upload' => 'messages#add_attachment'
 
   match 'messages/inbox/:id', to: 'messages#index', via: [:options, :get]
   match 'messages/view_html/:id', to: 'messages#view_html', via: [:options, :get]

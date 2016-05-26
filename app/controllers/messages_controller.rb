@@ -293,6 +293,20 @@ class MessagesController < ApplicationController
     end
   end
 
+  def add_attachment
+
+    @func_num = params["CKEditorFuncNum"]
+    @ck_editor = params["CKEditor"]
+    if params.include?(:upload)
+      data = params.delete(:upload)
+      @image = Attachment.create({:attached_file => data}) if data.present?
+      @url = @image.attached_file.url(:original, false)
+    end
+    puts "imagen => #{@url}"
+    render text: "<script>window.parent.CKEDITOR.tools.callFunction(#{@func_num}, '#{@url}');</script>"
+
+  end
+
   def new
     @message = Message.new
 
