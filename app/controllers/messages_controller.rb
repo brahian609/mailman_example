@@ -297,13 +297,27 @@ class MessagesController < ApplicationController
 
     @func_num = params["CKEditorFuncNum"]
     @ck_editor = params["CKEditor"]
-    if params.include?(:upload)
-      data = params.delete(:upload)
-      @image = Attachment.create({:attached_file => data}) if data.present?
-      @url = @image.attached_file.url(:original, false)
-    end
+    # if params.include?(:upload)
+    #   data = params.delete(:upload)
+    #   @image = Attachment.create({:attached_file => data}) if data.present?
+    #   @url = @image.attached_file.url(:original, false)
+    # end
+    # puts "imagen => #{@url}"
+    @url = params[:upload].path
+    @type = params[:upload].content_type
     puts "imagen => #{@url}"
-    render text: "<script>window.parent.CKEDITOR.tools.callFunction(#{@func_num}, '#{@url}');</script>"
+    puts "type => #{@type}"
+
+    # encoded_string = "data:#{@type};base64,#{Base64.encode64(File.open(@url, 'rb').read)}"
+    encoded_string = Base64.encode64(File.open(@url, 'rb').read)
+
+    # File.open(@url, 'r') do|image_file|
+    #   puts Base64.encode64(image_file.read)
+    # end
+
+    render text: "<script>window.parent.CKEDITOR.tools.callFunction(#{@func_num},'data:#{@type};base64,#{encoded_string}');</script>"
+
+    # render json: {base64: encoded_string}
 
   end
 
