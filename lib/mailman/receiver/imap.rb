@@ -83,13 +83,12 @@ module Mailman
         puts status['MESSAGES']
         puts "++++++++++ no leidos ++++++++++++"
         @unread = @connection.search(["NOT", "SEEN"])
-        # p @unread
+
         p @unread.count
         puts "++++++++++ get messages ++++++++++++"
 
         @connection.search(@filter).reverse!.slice($anterior..$siguiente).each do |message|
           # body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
-          # @connection.sort(["DATE"], ["ALL"], "US-ASCII")
           if @content == "mail"
             body = @connection.fetch(message, "RFC822")[0].attr["RFC822"]
           else
@@ -107,8 +106,6 @@ module Mailman
             else
               from = envelope.from[0].name
             end
-
-            #scan(/[^a-zA-Z]/).length
 
             body = {
                 message_id: message,

@@ -67,7 +67,7 @@ Mailman::Application.run do
       else
 
         p "Detalles del mensaje"
-        p message
+        puts message.html_part.body
 
         date = message.date.strftime('%a %d %b %Y, %I:%M %p')
 
