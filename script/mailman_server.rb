@@ -8,7 +8,7 @@ require 'mailman'
 Mailman.config.poll_interval = 0
 
 $anterior = $anterior.blank? ? 0 : $anterior #solo para testing desde consola
-$siguiente = $siguiente.blank? ? 2 : $siguiente # ""
+$siguiente = $siguiente.blank? ? 0 : $siguiente # ""
 
 count_range = ($anterior...$siguiente).count
 
@@ -23,6 +23,7 @@ if count_range > 1
 else
   content = 'mail'
 end
+
 
 
 
@@ -67,7 +68,22 @@ Mailman::Application.run do
       else
 
         p "Detalles del mensaje"
-        puts message.html_part.body
+        # puts message.html_part.body
+        # puts message.body
+        #
+        # puts "Expresion regular"
+        # body = message.body
+        # # puts body.match(/\((\d{3})\)?[\s+|\-|.|,](\d{3})?[\s+|\-|.|,](\d{4})/)
+        # expresion1 = /\((\d{3})\)?[\s+|\-|.|,](\d{7})/
+        # expresion2 = /\((\d{3})\)?[\s+|\-|.|,](\d{3})?[\s+|\-|.|,](\d{4})|(\d{10})/
+        #
+        # if !body.match(expresion1).nil?
+        #   puts body.match(expresion1)
+        # elsif !body.match(expresion2).nil?
+        #   puts body.match(expresion2)
+        # end
+        #
+        # puts message.subject
 
         date = message.date.strftime('%a %d %b %Y, %I:%M %p')
 

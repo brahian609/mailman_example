@@ -148,6 +148,19 @@ module Mailman
 
       end
 
+      def get_unread
+
+        begin
+
+          @unread = @connection.search(["NOT", "SEEN"])
+          @processor.process({unread: @unread.count})
+
+        rescue StandardError => error
+          Mailman.logger.error "Error encountered processing unread messages: #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"
+        end
+
+      end
+
       def started?
         not (!@connection.nil? && @connection.disconnected?)
       end

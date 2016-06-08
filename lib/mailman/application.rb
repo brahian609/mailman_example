@@ -149,6 +149,8 @@ module Mailman
             connection.get_messages
           elsif ENV['folder'] == 'folder'
             connection.get_folders
+          elsif ENV['option'] == 'unread'
+            connection.get_unread
           end
 
         rescue SystemCallError, EOFError => e

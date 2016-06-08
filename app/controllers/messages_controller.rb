@@ -139,6 +139,41 @@ class MessagesController < ApplicationController
 
   end
 
+  # Obtener la cantidad de correos no leidos
+  def unread
+
+    begin
+
+      id_cuenta = params[:id]
+      @setting_email = SettingsEmail.where(id: id_cuenta)
+
+      if @setting_email.blank?
+
+        render json: {errors: {message: "Debes configurar la cuenta de correo entrante"}}
+
+      else
+
+        @setting_email.each do |setting|
+          $server = setting.server
+          $port = setting.port
+          $username = setting.username
+          $password = setting.password
+        end
+
+        ENV['option'] = 'unread'
+        load 'script/mailman_function.rb'
+        render json: {errors: {data: @@unread, status: 200, message: "conexión exitosa"}}
+
+      end
+
+    rescue
+
+      render json: { errors: {data: @data, status: 500, message: "Error! valida las credenciales de acceso o revisa la configuración de tu cuenta"}  }
+
+    end
+
+  end
+
   #descargar el contenido de un correo en especifico
   def view_html
 
