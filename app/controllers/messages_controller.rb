@@ -174,6 +174,48 @@ class MessagesController < ApplicationController
 
   end
 
+  # Obtener la cantidad de correos de una carpeta
+  def num_messages
+
+    begin
+
+      id_cuenta = params[:id]
+      $folder   = "inbox"
+      @setting_email = SettingsEmail.where(id: id_cuenta)
+
+      if @setting_email.blank?
+
+        render json: {errors: {message: "Debes configurar la cuenta de correo entrante"}}
+
+      else
+
+        @setting_email.each do |setting|
+          $server = setting.server
+          $port = setting.port
+          $username = setting.username
+          $password = setting.password
+        end
+
+        ENV['option'] = 'num_messages'
+        load 'script/mailman_function.rb'
+        render json: {
+            errors: {
+                data: @@num_messages,
+                status: 200,
+                message: "conexión exitosa"
+            }
+        }
+
+      end
+
+    rescue
+
+      render json: { errors: {data: @data, status: 500, message: "Error! valida las credenciales de acceso o revisa la configuración de tu cuenta"}  }
+
+    end
+
+  end
+
   #descargar el contenido de un correo en especifico
   def view_html
 

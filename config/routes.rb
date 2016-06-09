@@ -15,6 +15,7 @@ MailmanExampleCode::Application.routes.draw do
   match 'messages/inbox/:id', to: 'messages#index', via: [:options, :get]
   match 'messages/view_html/:id', to: 'messages#view_html', via: [:options, :get]
   match 'messages/unread/:id', to: 'messages#unread', via: [:options, :get]
+  match 'messages/num_messages/:id', to: 'messages#num_messages', via: [:options, :get]
   match 'settings_emails/:id', to: 'settings_emails#show', via: [:options, :get]
   match 'settings_email', to: 'settings_emails#create', via: [:options, :post]
   match 'settings_email/:id', to: 'settings_emails#update', via: [:options, :put]

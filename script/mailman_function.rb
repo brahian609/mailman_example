@@ -19,10 +19,21 @@ Mailman::Application.run do
   default do
     begin
 
-      puts "++++++++++ mensajes no leidos ++++++++++++"
+      if ENV['option'] == 'unread'
 
-      p message['unread'].value
-      @@unread = message['unread'].value
+        puts "++++++++++ mensajes no leidos ++++++++++++"
+
+        p message['unread'].value
+        @@unread = message['unread'].value
+
+      elsif ENV['option'] == 'num_messages'
+
+        puts "++++++++++ número total de mensajes ++++++++++++"
+
+        p message['num_messages'].value
+        @@num_messages = message['num_messages'].value
+
+      end
 
     rescue Exception => e
       Mailman.logger.error "Exception occurred while receiving message:\n#{message.subject} , #{message.from}"

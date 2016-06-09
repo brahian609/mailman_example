@@ -161,6 +161,19 @@ module Mailman
 
       end
 
+      def get_num_messages
+
+        begin
+
+          status = @connection.status(@folder, ["MESSAGES"])
+          @processor.process({num_messages: status['MESSAGES']})
+
+        rescue StandardError => error
+          Mailman.logger.error "Error encountered processing number messages: #{error.class.to_s}: #{error.message}\n #{error.backtrace.join("\n")}"
+        end
+
+      end
+
       def started?
         not (!@connection.nil? && @connection.disconnected?)
       end
