@@ -25,7 +25,6 @@ else
 end
 
 
-
 Mailman.config.imap = {
     server: $server,
     port: $port,
@@ -134,12 +133,12 @@ Mailman::Application.run do
           end
 
           numberPhone = searchPhone(the_message_html)
-          link = "<a href='http://google.com' target='_blank'>#{numberPhone}</a>"
+          # link = "<a href='http://google.com' target='_blank'>#{numberPhone}</a>"
+          link = "<a href='javascript:parent.hola();' target='_blank'>#{numberPhone}</a>"
           puts "Expresion Regular"
           puts numberPhone.to_s
           puts link.to_s
           the_message_html = the_message_html.gsub(numberPhone.to_s, link.to_s)
-          puts the_message_html
 
           @@messages += [{count_id: cont , message_id: message_id, from: from_list, to: to_list, cc: cc_list, bcc: bcc_list, subject: message.subject, date: date, :html_body => the_message_html, text_body: the_message_text}]
           # p "Array de mensajes #{@@messages}"
