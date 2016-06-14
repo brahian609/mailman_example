@@ -78,13 +78,8 @@ module Mailman
         # end
         # @connection.expunge
 
-        status = @connection.status(@folder, ["MESSAGES"])
-        puts "++++++++++ total messages ++++++++++++"
-        puts status['MESSAGES']
-        puts "++++++++++ no leidos ++++++++++++"
         @unread = @connection.search(["NOT", "SEEN"])
 
-        p @unread.count
         puts "++++++++++ get messages ++++++++++++"
 
         @connection.search(@filter).reverse!.slice($anterior..$siguiente).each do |message|

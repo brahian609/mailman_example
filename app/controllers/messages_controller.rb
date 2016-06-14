@@ -185,7 +185,11 @@ class MessagesController < ApplicationController
 
       if @setting_email.blank?
 
-        render json: {errors: {message: "Debes configurar la cuenta de correo entrante"}}
+        render json: {
+            errors: {
+                message: "Debes configurar la cuenta de correo entrante"
+            }
+        }
 
       else
 
@@ -210,7 +214,13 @@ class MessagesController < ApplicationController
 
     rescue
 
-      render json: { errors: {data: @data, status: 500, message: "Error! valida las credenciales de acceso o revisa la configuración de tu cuenta"}  }
+      render json: {
+          errors: {
+              data: @data,
+              status: 500,
+              message: "Error! valida las credenciales de acceso o revisa la configuración de tu cuenta"
+          }
+      }
 
     end
 

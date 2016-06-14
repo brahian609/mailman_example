@@ -19,24 +19,29 @@ Mailman::Application.run do
   default do
     begin
 
-      if ENV['option'] == 'unread'
+      case ENV['option']
+        when 'unread'
 
-        puts "++++++++++ mensajes no leidos ++++++++++++"
+          puts "++++++++++ mensajes no leidos ++++++++++++"
 
-        p message['unread'].value
-        @@unread = message['unread'].value
+          p message['unread'].value
+          @@unread = message['unread'].value
 
-      elsif ENV['option'] == 'num_messages'
+        when 'num_messages'
 
-        puts "++++++++++ número total de mensajes ++++++++++++"
+          puts "++++++++++ número total de mensajes ++++++++++++"
 
-        p message['num_messages'].value
-        @@num_messages = message['num_messages'].value
+          p message['num_messages'].value
+          @@num_messages = message['num_messages'].value
+
+        else
+
+          puts 'no hay una condición valida'
 
       end
 
     rescue Exception => e
-      Mailman.logger.error "Exception occurred while receiving message:\n#{message.subject} , #{message.from}"
+      Mailman.logger.error "Exception occurred while receiving messages:\n#{message.subject} , #{message.from}"
       p "Error "
       Mailman.logger.error [e, *e.backtrace].join("\n")
       Kernel.exit

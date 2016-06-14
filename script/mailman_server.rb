@@ -7,8 +7,8 @@ require 'mailman'
 #Mailman.config.logger = Logger.new("log/mailman.log")
 Mailman.config.poll_interval = 0
 
-$anterior = $anterior.blank? ? 0 : $anterior #solo para testing desde consola
-$siguiente = $siguiente.blank? ? 0 : $siguiente # ""
+$anterior = $anterior.blank? ? 3 : $anterior #solo para testing desde consola
+$siguiente = $siguiente.blank? ? 3 : $siguiente # ""
 
 count_range = ($anterior...$siguiente).count
 
@@ -25,6 +25,7 @@ else
 end
 
 
+
 Mailman.config.imap = {
     server: $server,
     port: $port,
@@ -39,6 +40,27 @@ Mailman.config.imap = {
 
 fechaActual = DateTime.now.strftime("%d %b.")
 cont = $anterior - 1
+
+def searchPhone(str)
+
+  expresion1 = /\((\d{3})\)?[\s+|\-|.|,](\d{7})/ #(123)[ |-|.|,]1112222
+  expresion2 = /\((\d{3})\)?[\s+|\-|.|,](\d{3})?[\s+|\-|.|,](\d{4})/ #(123)[ |-|.|,]111[ |-|.|,]2222
+  expresion3 = /\s(\d{3})?[\s+|\-|.|,](\d{3})?[\s+|\-|.|,](\d{4})/ #123[ |-|.|,]111[ |-|.|,]2222
+  expresion4 = /\s(\d{3})?[\s+|\-|.|,](\d{7})/ #123[ |-|.|,]1112222
+
+  if !str.match(expresion1).nil?
+    phone = str.match(expresion1)
+  elsif !str.match(expresion2).nil?
+    phone = str.match(expresion2)
+  elsif !str.match(expresion3).nil?
+    phone = str.match(expresion3)
+  elsif !str.match(expresion4).nil?
+    phone = str.match(expresion4)
+  end
+
+  return phone
+
+end
 
 Mailman::Application.run do
 
@@ -66,22 +88,8 @@ Mailman::Application.run do
       else
 
         p "Detalles del mensaje"
-        # puts message.html_part.body
-        # puts message.body
-        #
-        # puts "Expresion regular"
-        # body = message.body
-        # # puts body.match(/\((\d{3})\)?[\s+|\-|.|,](\d{3})?[\s+|\-|.|,](\d{4})/)
-        # expresion1 = /\((\d{3})\)?[\s+|\-|.|,](\d{7})/
-        # expresion2 = /\((\d{3})\)?[\s+|\-|.|,](\d{3})?[\s+|\-|.|,](\d{4})|(\d{10})/
-        #
-        # if !body.match(expresion1).nil?
-        #   puts body.match(expresion1)
-        # elsif !body.match(expresion2).nil?
-        #   puts body.match(expresion2)
-        # end
-        #
-        # puts message.subject
+
+        puts message.subject
 
         date = message.date.strftime('%a %d %b %Y, %I:%M %p')
 
@@ -124,6 +132,14 @@ Mailman::Application.run do
               end
             end
           end
+
+          numberPhone = searchPhone(the_message_html)
+          link = "<a href='http://google.com' target='_blank'>#{numberPhone}</a>"
+          puts "Expresion Regular"
+          puts numberPhone.to_s
+          puts link.to_s
+          the_message_html = the_message_html.gsub(numberPhone.to_s, link.to_s)
+          puts the_message_html
 
           @@messages += [{count_id: cont , message_id: message_id, from: from_list, to: to_list, cc: cc_list, bcc: bcc_list, subject: message.subject, date: date, :html_body => the_message_html, text_body: the_message_text}]
           # p "Array de mensajes #{@@messages}"
@@ -184,10 +200,16 @@ Mailman::Application.run do
             end
           end
           # the_message_attachments = []
+
+          numberPhone = searchPhone(the_message_html)
+          link = "<a href='http://google.com' target='_blank'>#{numberPhone}</a>"
+          the_message_html.gsub(numberPhone, link)
+
           @@messages += [{count_id: cont ,message_id: message_id, from: from_list, to: to_list, cc: cc_list, bcc: bcc_list, subject: message.subject, date: date, :html_body => the_message_html, text_body: the_message_text}]
           # em = Message.create(:message_id => message_id, :from => from_list, :to => to_list, :subject => message.subject, :html_body => the_message_html, :text_body => the_message_text)
 
         end
+
 
       end
 
@@ -201,4 +223,3 @@ Mailman::Application.run do
     end
   end
 end
-
